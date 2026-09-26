@@ -473,3 +473,90 @@ button:focus-visible, select:focus-visible { outline: 3px solid #88c9bb; outline
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Dark page surfaces requested for AquaWatch. */
+:root {
+  --background: #000000;
+  --foreground: #f1f5f2;
+  --card: #0b0d0c;
+  --card-foreground: #f1f5f2;
+  --popover: #0b0d0c;
+  --popover-foreground: #f1f5f2;
+  --secondary: #151a18;
+  --secondary-foreground: #d4dfd9;
+  --muted: #151a18;
+  --muted-foreground: #a5b2ac;
+  --accent: #14231f;
+  --accent-foreground: #b7eee0;
+  --border: #252d29;
+  --input: #303a35;
+  color-scheme: dark;
+}
+
+body, .app-shell { background: #000; color: #f1f5f2; }
+.site-header { border-bottom-color: rgba(225, 242, 233, .13); }
+.brand, .hero-copy h1, .dashboard-heading h1, .steps-intro h2,
+.section-heading h2, .zone-name-row h3, .zone-count b, .overview-item b,
+.card-heading h3, .report-modal h2, .report-symptom b, .checklist-copy b {
+  color: #f1f5f2;
+}
+.nav-link:hover, .nav-link.is-active { color: #e7f3ed; }
+.header-status, .step-icon, .overview-strip, .count-pill, .zone-card,
+.chart-card, .report-list-card, .actions-card, .source-card,
+.report-modal, .modal-close {
+  background: #0b0d0c;
+  color: #e7efea;
+  border-color: #252d29;
+}
+.header-status { color: #bac9c2; }
+.hero-subtitle, .step-text p, .dashboard-heading p, .section-heading .eyebrow,
+.overview-aside, .zone-count span, .zone-count small, .zone-card-bottom,
+.risk-legend, .dashboard-footer, .chart-window, .chart-y-labels,
+.chart-labels b, .chart-footnote, .report-symptom small, .report-time,
+.empty-reports, .actions-intro, .checklist-copy small, .results-disclaimer,
+.modal-intro, .field-label, .privacy-note {
+  color: #a5b2ac;
+}
+.hero-note, .hero-byline, .landing-footer > span { color: #aab8b2; }
+.steps-section, .dashboard-footer, .overview-divider,
+.zone-card-bottom, .report-list, .report-row, .chart-footnote,
+.checklist, .checklist-row { border-color: #252d29; }
+.step-number { background: #000; color: #a5b2ac; }
+.overview-item small, .updated-label small { color: #a5b2ac; }
+.overview-aside b { color: #d5e4dd; }
+.attention-banner { background: #21190f; border-color: #594329; color: #e8d9c6; }
+.attention-banner:hover { background: #2a2014; border-color: #775b35; }
+.attention-banner b { color: #f2dfc7; }
+.attention-banner small { color: #c5b49c; }
+.zone-card:hover { border-color: #48574f; box-shadow: 0 12px 25px rgba(0, 0, 0, .45); }
+.zone-card-bottom { border-top-color: #252d29; }
+.risk-banner.risk-coral { background: linear-gradient(108deg, #211713 0%, #1c1511 58%, #21190f 100%); border-color: #594035; }
+.risk-banner.risk-gold { background: linear-gradient(108deg, #211c11 0%, #1b180f 100%); border-color: #58482a; }
+.risk-banner.risk-green { background: linear-gradient(108deg, #111e18 0%, #131b16 100%); border-color: #304c3d; }
+.banner-eyebrow, .risk-banner p { color: #c4b9a9; }
+.banner-count { color: #d0bba7; }
+.chart-grid-line { stroke: #29332e; }
+.chart-dot { stroke: #0b0d0c; }
+.source-card { background: linear-gradient(137deg, #111d17 0%, #0b0d0c 73%); }
+.source-card.source-alert { background: linear-gradient(139deg, #21190f 0%, #0b0d0c 73%); border-color: #594329; }
+.source-card h3, .source-empty h3 { color: #f1e8dd; }
+.source-card > p, .source-card > p strong, .source-caution { color: #c1b5a6; }
+.source-caution { border-top-color: rgba(200, 180, 148, .2); }
+.actions-progress { background: #14231f; color: #b7eee0; }
+.custom-checkbox { background: #101412; border-color: #53635a; }
+.checklist-row:hover .custom-checkbox { border-color: #71b6a3; }
+.share-button { color: #aee3d3; background: #10211b; border-color: #31594a; }
+.share-button:hover { background: #173027; }
+.report-modal { border-color: #303a35; }
+.modal-close:hover { background: #18201c; }
+.report-modal select { color: #e7efea; background-color: #111613; border-color: #3a4740; color-scheme: dark; }
+
+.visual-topline { color: #e4eee8; background: rgba(8, 13, 12, .88); border-color: rgba(220, 242, 230, .2); }
+.visual-spark { background: rgba(8, 123, 121, .22); }
+.visual-pin { background: rgba(9, 15, 13, .94); border-color: rgba(220, 242, 230, .2); }
+.visual-pin b { color: #eff6f2; }
+.visual-pin small { color: #aab8b2; }
+.risk-coral .risk-banner h1 { color: #ef9a83; }
+.risk-gold .risk-banner h1 { color: #e7c978; }
+.risk-green .risk-banner h1 { color: #8bd2ae; }
