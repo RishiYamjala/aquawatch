@@ -132,15 +132,6 @@ function Header({ screen, onHome, onDashboard }: { screen: Screen; onHome: () =>
   );
 }
 
-function WaveIllustration() {
-  return (
-    <svg className="wave-art" viewBox="0 0 960 540" preserveAspectRatio="none" role="img" aria-label="A bright yellow waterline above a deep navy wave">
-      <rect width="960" height="540" fill="#092334" />
-      <path d="M0 236L31 80L62 151L93 79L124 78L155 233L186 197L217 108L248 48L279 50L310 237L341 209L372 221L403 115L434 113L465 156L495 231L526 265L557 157L588 62L619 221L650 173L681 127L712 236L743 67L774 89L805 149L836 112L867 235L898 194L929 269L960 81L960 0L0 0Z" fill="#ffdb58" />
-    </svg>
-  );
-}
-
 function Landing({ onDashboard, totalRecent }: { onDashboard: () => void; totalRecent: number }) {
   const steps = [
     { icon: HeartPulse, number: "01", title: "Report", body: "Neighbors share symptoms in seconds." },
@@ -161,7 +152,7 @@ function Landing({ onDashboard, totalRecent }: { onDashboard: () => void; totalR
           <div className="hero-byline"><span className="avatar-stack"><i>AM</i><i>RK</i><i>+</i></span><span>Built for neighbors and local health teams</span></div>
         </div>
         <div className="hero-visual">
-          <WaveIllustration />
+          <img className="low-poly-art" src="/manus-storage/low-poly-grid-haikei_13127646.svg" alt="" aria-hidden="true" />
           <div className="visual-topline"><span className="visual-spark"><Sparkles size={15} /></span><span>One shared view of community health</span></div>
           <div className="visual-ripple ripple-one" /><div className="visual-ripple ripple-two" />
           <div className="visual-pin"><span className="visual-pin-icon"><MapPin size={19} fill="currentColor" /></span><span><b>Riverside Colony</b><small>Signal needs attention</small></span><span className="visual-pin-dot" /></div>
