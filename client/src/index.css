@@ -560,3 +560,67 @@ body, .app-shell { background: #000; color: #f1f5f2; }
 .risk-coral .risk-banner h1 { color: #ef9a83; }
 .risk-gold .risk-banner h1 { color: #e7c978; }
 .risk-green .risk-banner h1 { color: #8bd2ae; }
+
+
+.neighborhood-map-section {
+  margin-top: 22px;
+  padding: 19px;
+  border: 1px solid #252d29;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0b100e 0%, #070908 100%);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+}
+.map-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 15px; }
+.map-panel-heading .eyebrow { color: #75b5a1; }
+.map-panel-heading h3 { margin: 5px 0 3px; color: #f1f5f2; font: 500 21px/1.2 Georgia, serif; letter-spacing: -.25px; }
+.map-panel-heading p { margin: 0; color: #a5b2ac; font-size: 10px; }
+.map-sample-label { display: inline-flex; align-items: center; gap: 7px; padding: 7px 9px; border: 1px solid #27342e; border-radius: 99px; color: #bac9c2; background: #0c1210; font-size: 7px; font-weight: 750; letter-spacing: .08em; white-space: nowrap; }
+.map-sample-dot { width: 6px; height: 6px; border-radius: 50%; background: #e3b44f; box-shadow: 0 0 0 3px rgba(227, 180, 79, .12); }
+.neighborhood-map-layout { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(245px, .82fr); gap: 12px; }
+.neighborhood-map-canvas { min-width: 0; min-height: 360px; height: 360px; position: relative; overflow: hidden; border: 1px solid #26342e; border-radius: 11px; background: #101817; }
+.neighborhood-google-map { width: 100%; height: 100%; min-height: 360px; }
+.map-overlay-label { position: absolute; top: 12px; left: 12px; z-index: 1; display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border: 1px solid rgba(192, 220, 206, .16); border-radius: 8px; color: #e0ebe5; background: rgba(7, 13, 11, .86); backdrop-filter: blur(9px); font-size: 8px; font-weight: 650; pointer-events: none; }
+.map-zone-list { min-width: 0; padding: 13px 12px 10px; border: 1px solid #222d28; border-radius: 11px; background: #090d0b; }
+.map-zone-list-heading { display: flex; align-items: center; justify-content: space-between; padding: 1px 2px 10px; color: #9fb0a8; font-size: 7px; font-weight: 800; letter-spacing: .12em; }
+.map-zone-list-heading b { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid #2b3932; border-radius: 50%; color: #d9e5de; font-size: 8px; letter-spacing: 0; }
+.map-zone-items { display: grid; }
+.map-zone-item { width: 100%; min-width: 0; display: flex; align-items: center; gap: 9px; padding: 10px 2px; border: 0; border-top: 1px solid #1d2722; color: #e7efea; background: transparent; text-align: left; transition: background .16s ease-out; }
+.map-zone-item:hover { background: #111a15; }
+.map-zone-pin { flex: 0 0 29px; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: color-mix(in srgb, var(--marker-color) 15%, #111613); color: var(--marker-color); }
+.map-zone-pin.risk-high { --marker-color: #ed796b; }
+.map-zone-pin.risk-moderate { --marker-color: #e3b44f; }
+.map-zone-pin.risk-low { --marker-color: #46b887; }
+.map-zone-copy { min-width: 0; display: grid; gap: 3px; }
+.map-zone-copy b { overflow: hidden; color: #e7efea; font-size: 8px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.map-zone-copy small { color: #94a49c; font-size: 7px; }
+.map-zone-count { margin-left: auto; color: #dce9e1; font-size: 9px; font-weight: 750; }
+.map-zone-count.risk-high { color: #f29585; }
+.map-zone-count.risk-moderate { color: #e7c978; }
+.map-zone-count.risk-low { color: #82d4ab; }
+.map-zone-arrow { flex: 0 0 auto; color: #84978d; transition: transform .16s, color .16s; }
+.map-zone-item:hover .map-zone-arrow { color: #a9e0c8; transform: translate(1px, -1px); }
+.map-privacy-note { display: flex; align-items: center; gap: 6px; margin-top: 7px; padding-top: 10px; border-top: 1px solid #1d2722; color: #91a49a; font-size: 7px; line-height: 1.45; }
+.map-privacy-note svg { flex: 0 0 auto; color: #79b99e; }
+.map-disclaimer { margin: 10px 1px 0; color: #82948b; font-size: 7px; line-height: 1.5; }
+.neighborhood-map-marker { position: relative; width: 34px; height: 34px; display: grid; place-items: center; border: 2px solid rgba(241, 250, 245, .94); border-radius: 50%; color: #08110d; background: var(--marker-color); box-shadow: 0 0 0 5px color-mix(in srgb, var(--marker-color) 22%, transparent), 0 5px 14px rgba(0, 0, 0, .5); font: 800 11px/1 "Avenir Next", Avenir, sans-serif; cursor: pointer; transition: transform .16s ease-out, box-shadow .16s ease-out; }
+.neighborhood-map-marker::after { position: absolute; left: 50%; bottom: -6px; width: 8px; height: 8px; content: ""; background: var(--marker-color); transform: translateX(-50%) rotate(45deg); border-right: 1px solid rgba(241, 250, 245, .94); border-bottom: 1px solid rgba(241, 250, 245, .94); }
+.neighborhood-map-marker:hover, .neighborhood-map-marker:focus-visible { z-index: 5; outline: none; transform: scale(1.13); box-shadow: 0 0 0 7px color-mix(in srgb, var(--marker-color) 28%, transparent), 0 6px 18px rgba(0, 0, 0, .56); }
+.map-fallback { height: 100%; min-height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; color: #91cbb1; text-align: center; background: radial-gradient(ellipse at center, #12241b 0%, #0b100e 66%); }
+.map-fallback b { color: #e7efea; font-size: 12px; }
+.map-fallback span { max-width: 260px; color: #a5b2ac; font-size: 9px; line-height: 1.55; }
+.map-load-error { border-style: dashed; }
+@media (max-width: 900px) {
+  .neighborhood-map-layout { grid-template-columns: 1fr; }
+  .map-zone-list { padding: 11px 12px 9px; }
+  .map-zone-items { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 13px; }
+  .map-zone-list-heading, .map-privacy-note { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .neighborhood-map-section { margin-top: 17px; padding: 12px; border-radius: 12px; }
+  .map-panel-heading { align-items: flex-start; gap: 8px; }
+  .map-panel-heading h3 { font-size: 18px; }
+  .map-panel-heading p { font-size: 9px; }
+  .map-sample-label { max-width: 118px; padding: 6px 7px; font-size: 6px; white-space: normal; }
+  .neighborhood-map-canvas, .neighborhood-google-map, .map-fallback { min-height: 295px; height: 295px; }
+  .map-zone-items { grid-template-columns: 1fr; }
+}

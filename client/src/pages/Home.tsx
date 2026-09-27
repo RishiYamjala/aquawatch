@@ -22,6 +22,7 @@ import {
   Waves,
   X,
 } from "lucide-react";
+import { NeighborhoodMap } from "@/components/NeighborhoodMap";
 
 type Symptom = "Diarrhea" | "Vomiting" | "Fever" | "Stomach Pain";
 type WaterSource = "Municipal Tap" | "Bore Well" | "Water Tanker" | "Hand Pump" | "Hand Pump #3";
@@ -215,6 +216,7 @@ function Dashboard({ summaries, totalRecent, onSelectZone, onReport }: { summari
         <div className="overview-aside"><span className="overview-aside-dot" /><span><b>{moderateCount} areas</b> to keep an eye on</span><ArrowRight size={15} /></div>
       </div>
       {highCount > 0 && <button className="attention-banner" onClick={() => onSelectZone(summaries.find((s) => s.risk === "HIGH")!.zone)}><span className="attention-icon"><AlertTriangle size={18} /></span><span><b>One neighborhood needs a closer look</b><small>Open the Riverside Colony signal to see the likely shared water source and suggested next steps.</small></span><span className="attention-cta">Review signal <ArrowRight size={15} /></span></button>}
+      <NeighborhoodMap summaries={summaries} onSelectZone={onSelectZone} />
       <div className="section-heading"><div><span className="eyebrow">AREA-BY-AREA SIGNAL</span><h2>How is your neighborhood?</h2></div><span className="count-pill"><span className="live-dot" /> {summaries.length} areas monitored</span></div>
       <div className="zones-grid">{summaries.map((summary, index) => <ZoneCard key={summary.zone} summary={summary} onClick={() => onSelectZone(summary.zone)} index={index} />)}</div>
       <div className="risk-legend"><span><i className="legend-dot green" /> 0–2 Low</span><span><i className="legend-dot yellow" /> 3–6 Moderate</span><span><i className="legend-dot red" /> 7+ High reports in the last 48 hours</span></div>
