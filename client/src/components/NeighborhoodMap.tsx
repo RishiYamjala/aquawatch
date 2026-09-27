@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, LocateFixed, MapPin, ShieldCheck } from "lucide-react";
-import { MapView } from "@/components/Map";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 type Risk = "LOW" | "MODERATE" | "HIGH";
 type ZoneSummary = {
@@ -9,12 +10,12 @@ type ZoneSummary = {
   risk: Risk;
 };
 
-const SAMPLE_LOCATIONS: Record<string, google.maps.LatLngLiteral> = {
-  "Riverside Colony": { lat: 28.6518, lng: 77.2386 },
-  "Sector 12": { lat: 28.6139, lng: 77.2089 },
-  "Old Town": { lat: 28.6631, lng: 77.2244 },
-  "Green Park": { lat: 28.5584, lng: 77.206 },
-  Lakeview: { lat: 28.6842, lng: 77.2527 },
+const SAMPLE_LOCATIONS: Record<string, L.LatLngTuple> = {
+  "Riverside Colony": [28.6518, 77.2386],
+  "Sector 12": [28.6139, 77.2089],
+  "Old Town": [28.6631, 77.2244],
+  "Green Park": [28.5584, 77.206],
+  Lakeview: [28.6842, 77.2527],
 };
 
 const RISK_COLORS: Record<Risk, string> = {
@@ -30,39 +31,63 @@ export function NeighborhoodMap({
   summaries: ZoneSummary[];
   onSelectZone: (zone: string) => void;
 }) {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const onSelectZoneRef = useRef(onSelectZone);
   const [mapError, setMapError] = useState(false);
+  onSelectZoneRef.current = onSelectZone;
 
-  const placeMarkers = (map: google.maps.Map) => {
-    map.setOptions({
-      colorScheme: google.maps.ColorScheme.DARK,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: true,
-      zoomControl: true,
-      clickableIcons: false,
-      gestureHandling: "cooperative",
-    });
+  useEffect(() => {
+    if (!mapContainer.current) return;
 
-    summaries.forEach((summary) => {
-      const position = SAMPLE_LOCATIONS[summary.zone];
-      if (!position || !window.google?.maps?.marker) return;
+    let map: L.Map | null = null;
+    try {
+      map = L.map(mapContainer.current, {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        zoomSnap: 0.5,
+        attributionControl: true,
+      }).setView([28.625, 77.229], 10.5);
 
-      const markerContent = document.createElement("div");
-      markerContent.className = `neighborhood-map-marker risk-${summary.risk.toLowerCase()}`;
-        markerContent.style.setProperty("--marker-color", RISK_COLORS[summary.risk]);
-        markerContent.innerHTML = `<span>${summary.current.length}</span>`;
+      L.control.zoom({ position: "bottomright" }).addTo(map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+      }).addTo(map);
 
-        const marker = new window.google.maps.marker.AdvancedMarkerElement({
-          map,
-          position,
+      const bounds = L.latLngBounds([]);
+      summaries.forEach((summary) => {
+        const position = SAMPLE_LOCATIONS[summary.zone];
+        if (!position) return;
+
+        const marker = L.marker(position, {
+          keyboard: true,
+          riseOnHover: true,
           title: `${summary.zone}: ${summary.risk.toLowerCase()} risk, ${summary.current.length} reports in 48 hours`,
-          content: markerContent,
-          gmpClickable: true,
-          zIndex: summary.risk === "HIGH" ? 3 : summary.risk === "MODERATE" ? 2 : 1,
-        });
-      marker.addListener("click", () => onSelectZone(summary.zone));
-    });
-  };
+          icon: L.divIcon({
+            className: "neighborhood-map-marker-shell",
+            html: `<button type="button" class="neighborhood-map-marker risk-${summary.risk.toLowerCase()}" style="--marker-color:${RISK_COLORS[summary.risk]}" aria-label="Open ${summary.zone}: ${summary.risk.toLowerCase()} risk, ${summary.current.length} reports">${summary.current.length}</button>`,
+            iconSize: [38, 42],
+            iconAnchor: [19, 38],
+          }),
+        }).addTo(map!);
+
+        marker.on("click", () => onSelectZoneRef.current(summary.zone));
+        bounds.extend(position);
+      });
+
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 11 });
+      }
+      requestAnimationFrame(() => map?.invalidateSize());
+    } catch (error) {
+      console.error("OpenStreetMap failed to initialize", error);
+      setMapError(true);
+    }
+
+    return () => {
+      map?.remove();
+    };
+  }, [summaries]);
 
   return (
     <section className="neighborhood-map-section" aria-labelledby="neighborhood-map-title">
@@ -78,13 +103,7 @@ export function NeighborhoodMap({
       <div className="neighborhood-map-layout">
         <div className={`neighborhood-map-canvas ${mapError ? "map-load-error" : ""}`}>
           {!mapError ? (
-            <MapView
-              className="neighborhood-google-map"
-              initialCenter={{ lat: 28.625, lng: 77.229 }}
-              initialZoom={11}
-              onMapReady={placeMarkers}
-              onMapError={() => setMapError(true)}
-            />
+            <div ref={mapContainer} className="neighborhood-openstreetmap" aria-label="Interactive OpenStreetMap of sample neighborhood locations" />
           ) : (
             <div className="map-fallback" role="status">
               <MapPin size={23} />
@@ -92,7 +111,7 @@ export function NeighborhoodMap({
               <span>Choose an area from the location list to view its signal.</span>
             </div>
           )}
-          {!mapError && <span className="map-overlay-label"><LocateFixed size={13} /> Community signals</span>}
+          {!mapError && <span className="map-overlay-label"><LocateFixed size={13} /> Community signals · OpenStreetMap</span>}
         </div>
 
         <aside className="map-zone-list" aria-label="Neighborhood map locations">
