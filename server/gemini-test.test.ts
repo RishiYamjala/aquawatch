@@ -53,9 +53,10 @@ describe("POST /api/gemini/test", () => {
     expect(GoogleGenAI).toHaveBeenCalledWith({ apiKey: "test-only-secret-not-a-real-key" });
     expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({
       model: "gemini-3.8-flash",
-      input: expect.stringContaining("AquaWatch Gemini test"),
+      input: expect.stringContaining("Gemini is responding successfully for AquaWatch"),
       store: false,
-    }), { timeout_ms: 25_000 });
+      generation_config: { max_output_tokens: 64, thinking_level: "low" },
+    }), { timeout_ms: 25_000, retries: { strategy: "none" } });
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
 
@@ -81,5 +82,17 @@ describe("POST /api/gemini/test", () => {
     expect(body.ok).toBe(false);
     expect(body.error).toContain("Gemini request failed");
     expect(JSON.stringify(body)).not.toContain("credentials");
+  });
+
+  it("returns a retryable JSON response for Gemini high-demand outages", async () => {
+    mockCreate.mockRejectedValueOnce(Object.assign(new Error("temporary provider details"), { status: 503 }));
+
+    const response = await postTestEndpoint();
+    const body = await response.json() as { ok?: boolean; error?: string };
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("retry-after")).toBe("30");
+    expect(body).toEqual({ ok: false, error: "Gemini is temporarily unavailable. Try again shortly." });
+    expect(JSON.stringify(body)).not.toContain("temporary provider details");
   });
 });

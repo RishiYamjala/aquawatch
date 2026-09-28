@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const GEMINI_MODEL = "gemini-3.8-flash";
-const TEST_PROMPT = "Reply with a short sentence confirming that the AquaWatch Gemini test is working.";
+const TEST_PROMPT = "Return exactly this short sentence: Gemini is responding successfully for AquaWatch.";
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const requestsByIp = new Map<string, number[]>();
@@ -45,16 +45,23 @@ export function createApp() {
         model: GEMINI_MODEL,
         input: TEST_PROMPT,
         store: false,
-        generation_config: { max_output_tokens: 32 },
-      }, { timeout_ms: 25_000 });
+        generation_config: { max_output_tokens: 64, thinking_level: "low" },
+      }, { timeout_ms: 25_000, retries: { strategy: "none" } });
       const text = result.output_text?.trim();
       if (!text) {
         return res.status(502).json({ ok: false, error: "Gemini returned an empty response." });
       }
 
       return res.status(200).json({ ok: true, model: GEMINI_MODEL, text });
-    } catch {
+    } catch (error) {
       // Do not expose provider diagnostics, request details, or credentials.
+      const upstreamStatus = error && typeof error === "object" && "status" in error
+        ? (error as { status?: unknown }).status
+        : undefined;
+      if (upstreamStatus === 429 || upstreamStatus === 503) {
+        res.setHeader("Retry-After", "30");
+        return res.status(503).json({ ok: false, error: "Gemini is temporarily unavailable. Try again shortly." });
+      }
       return res.status(502).json({ ok: false, error: "Gemini request failed. Check server configuration and provider availability." });
     }
   });
