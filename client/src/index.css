@@ -474,6 +474,22 @@ button:focus-visible, select:focus-visible { outline: 3px solid #88c9bb; outline
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
+/* Review analysis stays within the existing report form and recent-report panel. */
+.field-label span { margin-left: 4px; color: #91a09a; font-weight: 500; }
+.report-review-input { width: 100%; min-height: 76px; resize: vertical; padding: 9px 11px; border: 1px solid #dfe9e3; border-radius: 7px; color: #314b4e; background: #fbfdfb; font: inherit; font-size: 10px; line-height: 1.5; outline-color: #68aa98; }
+.report-review-input::placeholder { color: #9aa8a2; }
+.review-character-count { margin-top: 3px; color: #91a09a; font-size: 7px; text-align: right; }
+.report-row { align-items: flex-start; }
+.report-symptom { flex: 1; }
+.report-review-text { display: block; margin-top: 4px; color: #778b83; font-size: 8px; line-height: 1.45; white-space: normal; }
+.review-analysis-status { display: block; margin-top: 5px; color: #558577 !important; font-size: 8px !important; white-space: normal !important; }
+.review-analysis-error { color: #9b6657 !important; }
+.review-analysis { display: grid; gap: 4px; margin-top: 7px; padding: 7px 9px; border-left: 2px solid #67a58e; border-radius: 0 6px 6px 0; color: #536e65; background: rgba(232, 244, 237, .72); }
+.review-analysis > small { color: #71847d; font-size: 7px; line-height: 1.45; white-space: normal; }
+.review-analysis > small b { color: #42695d; }
+.review-analysis > span { color: #4f625d; font-size: 8px; line-height: 1.5; white-space: normal; }
+.report-time { align-self: flex-start; }
+
 
 .neighborhood-map-section {
   margin-top: 22px;

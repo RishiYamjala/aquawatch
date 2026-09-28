@@ -27,12 +27,16 @@ import { NeighborhoodMap } from "@/components/NeighborhoodMap";
 type Symptom = "Diarrhea" | "Vomiting" | "Fever" | "Stomach Pain";
 type WaterSource = "Municipal Tap" | "Bore Well" | "Water Tanker" | "Hand Pump" | "Hand Pump #3";
 type Risk = "LOW" | "MODERATE" | "HIGH";
+type ReviewAnalysis = { category: "water_quality" | "health_symptoms" | "water_supply" | "other"; severity: "low" | "moderate" | "high"; summary: string; recommended_action: string };
 type Report = {
   id: string;
   zone: string;
   symptom: Symptom;
   waterSource: WaterSource;
   timestamp: number;
+  reviewText?: string;
+  analysis?: ReviewAnalysis;
+  analysisStatus?: "pending" | "complete" | "failed";
 };
 type Screen = "landing" | "dashboard" | "results";
 
@@ -113,6 +117,15 @@ function prettyAgo(timestamp: number) {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   return `${days}d ago`;
+}
+
+function isReviewAnalysis(value: unknown): value is ReviewAnalysis {
+  if (!value || typeof value !== "object") return false;
+  const result = value as Record<string, unknown>;
+  return ["water_quality", "health_symptoms", "water_supply", "other"].includes(String(result.category))
+    && ["low", "moderate", "high"].includes(String(result.severity))
+    && typeof result.summary === "string"
+    && typeof result.recommended_action === "string";
 }
 
 function Header({ screen, onHome, onDashboard }: { screen: Screen; onHome: () => void; onDashboard: () => void }) {
@@ -301,7 +314,7 @@ function Results({ zone, summary, reports, onBack, onShare, sharedMessage }: { z
       <div className="results-grid">
         <section className="results-main"><VolumeChart reports={reports} zone={zone} />
           <div className="report-list-card"><div className="card-heading"><div><span className="eyebrow">COMMUNITY CHECK-INS</span><h3>Recent reports</h3></div><span className="count-pill">{recent.length} in 48h</span></div>
-            {recent.length ? <div className="report-list">{recent.slice().sort((a, b) => b.timestamp - a.timestamp).slice(0, 4).map((report) => <div className="report-row" key={report.id}><span className="report-symptom-icon"><HeartPulse size={16} /></span><span className="report-symptom"><b>{report.symptom}</b><small>{report.waterSource}</small></span><span className="report-time">{prettyAgo(report.timestamp)}</span></div>)}</div> : <div className="empty-reports"><Droplet size={18} /> No recent reports in this area.</div>}
+            {recent.length ? <div className="report-list">{recent.slice().sort((a, b) => b.timestamp - a.timestamp).slice(0, 4).map((report) => <div className="report-row" key={report.id}><span className="report-symptom-icon"><HeartPulse size={16} /></span><span className="report-symptom"><b>{report.symptom}</b><small>{report.waterSource}</small>{report.reviewText && <small className="report-review-text">“{report.reviewText}”</small>}{report.analysisStatus === "pending" && <small className="review-analysis-status" role="status">Analyzing review…</small>}{report.analysisStatus === "failed" && <small className="review-analysis-status review-analysis-error" role="status">AI analysis unavailable; report saved.</small>}{report.analysis && <span className="review-analysis"><small><b>Gemini · {report.analysis.category.replaceAll("_", " ")}</b> · {report.analysis.severity} severity</small><span>{report.analysis.summary}</span><small><b>Suggested:</b> {report.analysis.recommended_action}</small></span>}</span><span className="report-time">{prettyAgo(report.timestamp)}</span></div>)}</div> : <div className="empty-reports"><Droplet size={18} /> No recent reports in this area.</div>}
           </div>
         </section>
         <aside className="results-side"><SourceCard recent={recent} />
@@ -318,10 +331,11 @@ function Results({ zone, summary, reports, onBack, onShare, sharedMessage }: { z
   );
 }
 
-function ReportModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (values: { zone: string; symptom: Symptom; waterSource: WaterSource }) => void }) {
+function ReportModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (values: { zone: string; symptom: Symptom; waterSource: WaterSource; reviewText: string }) => void }) {
   const [zone, setZone] = useState(ZONES[0]);
   const [symptom, setSymptom] = useState<Symptom>("Diarrhea");
   const [waterSource, setWaterSource] = useState<WaterSource>("Hand Pump #3");
+  const [reviewText, setReviewText] = useState("");
   return (
     <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section className="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-title">
@@ -329,14 +343,17 @@ function ReportModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (va
         <span className="modal-icon"><Droplet size={21} /></span>
         <span className="eyebrow">A QUICK COMMUNITY CHECK-IN</span><h2 id="report-title">Report a symptom</h2>
         <p className="modal-intro">Reports are anonymous in this demo. Your check-in helps your neighborhood notice patterns sooner.</p>
-        <form onSubmit={(event) => { event.preventDefault(); onSubmit({ zone, symptom, waterSource }); }}>
+        <form onSubmit={(event) => { event.preventDefault(); onSubmit({ zone, symptom, waterSource, reviewText }); }}>
           <label className="field-label" htmlFor="report-zone">Neighborhood</label>
           <select id="report-zone" value={zone} onChange={(event) => setZone(event.target.value)}>{ZONES.map((item) => <option key={item} value={item}>{item}</option>)}</select>
           <label className="field-label" htmlFor="report-symptom">Symptom</label>
           <select id="report-symptom" value={symptom} onChange={(event) => setSymptom(event.target.value as Symptom)}>{SYMPTOMS.map((item) => <option key={item} value={item}>{item}</option>)}</select>
           <label className="field-label" htmlFor="report-source">Water source used</label>
           <select id="report-source" value={waterSource} onChange={(event) => setWaterSource(event.target.value as WaterSource)}>{SOURCES.map((item) => <option key={item} value={item}>{item}</option>)}</select>
-          <div className="privacy-note"><ShieldCheck size={14} /> No name or contact details are collected.</div>
+          <label className="field-label" htmlFor="report-review">What did you notice? <span>Optional</span></label>
+          <textarea id="report-review" className="report-review-input" value={reviewText} onChange={(event) => setReviewText(event.target.value)} maxLength={800} rows={3} placeholder="Describe a change in water taste, color, supply, or how someone is feeling." />
+          <div className="review-character-count">{reviewText.length}/800</div>
+          <div className="privacy-note"><ShieldCheck size={14} /> No name or contact details are collected. Optional review text is sent to Gemini for automated analysis.</div>
           <button type="submit" className="button-primary modal-submit">Submit report <ArrowRight size={16} /></button>
         </form>
       </section>
@@ -366,12 +383,31 @@ export default function Home() {
   const goHome = () => { setScreen("landing"); setToast(""); };
   const goDashboard = () => { setScreen("dashboard"); setToast(""); };
   const openResults = (zone: string) => { setSelectedZone(zone); setShareMessage(""); setScreen("results"); };
-  const submitReport = ({ zone, symptom, waterSource }: { zone: string; symptom: Symptom; waterSource: WaterSource }) => {
-    const report: Report = { id: `report-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, zone, symptom, waterSource, timestamp: Date.now() };
+  const submitReport = ({ zone, symptom, waterSource, reviewText }: { zone: string; symptom: Symptom; waterSource: WaterSource; reviewText: string }) => {
+    const id = `report-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const report: Report = { id, zone, symptom, waterSource, timestamp: Date.now(), reviewText: reviewText.trim() || undefined, analysisStatus: "pending" };
     setReports((current) => [report, ...current]);
     setModalOpen(false);
     setToast(`Report added for ${zone}`);
     window.setTimeout(() => setToast(""), 3200);
+
+    const reviewForAnalysis = [
+      `Neighborhood: ${zone}`,
+      `Reported symptom: ${symptom}`,
+      `Water source used: ${waterSource}`,
+      reviewText.trim() ? `Additional review: ${reviewText.trim()}` : "No additional details were provided.",
+    ].join("\n");
+    void fetch("/api/gemini/analyze-review", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reviewText: reviewForAnalysis }),
+    }).then(async (response) => {
+      const result = await response.json() as { ok?: boolean; analysis?: unknown };
+      if (!response.ok || result.ok !== true || !isReviewAnalysis(result.analysis)) throw new Error("Review analysis unavailable");
+      setReports((current) => current.map((item) => item.id === id ? { ...item, analysis: result.analysis as ReviewAnalysis, analysisStatus: "complete" } : item));
+    }).catch(() => {
+      setReports((current) => current.map((item) => item.id === id ? { ...item, analysisStatus: "failed" } : item));
+    });
   };
   const shareAlert = async () => {
     const message = `AquaWatch ${activeSummary.risk} RISK — ${selectedZone}: ${activeSummary.current.length} community reports in the last 48 hours. Please follow local health guidance.`;

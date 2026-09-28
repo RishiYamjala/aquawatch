@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { createGeminiMiddleware } from "./server/geminiRouter";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -150,6 +151,15 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
+function vitePluginGeminiApi(): Plugin {
+  return {
+    name: "aquawatch-gemini-api",
+    configureServer(server: ViteDevServer) {
+      server.middlewares.use(createGeminiMiddleware());
+    },
+  };
+}
+
 function vitePluginStorageProxy(): Plugin {
   return {
     name: "manus-storage-proxy",
@@ -203,7 +213,7 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginGeminiApi(), vitePluginStorageProxy()];
 
 export default defineConfig({
   plugins,
