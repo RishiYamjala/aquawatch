@@ -153,7 +153,6 @@ function Landing({ onDashboard, totalRecent }: { onDashboard: () => void; totalR
           <div className="hero-byline"><span className="avatar-stack"><i>AM</i><i>RK</i><i>+</i></span><span>Built for neighbors and local health teams</span></div>
         </div>
         <div className="hero-visual">
-          <img className="low-poly-art" src="/manus-storage/low-poly-grid-haikei_13127646.svg" alt="" aria-hidden="true" />
           <div className="visual-topline"><span className="visual-spark"><Sparkles size={15} /></span><span>One shared view of community health</span></div>
           <div className="visual-ripple ripple-one" /><div className="visual-ripple ripple-two" />
           <div className="visual-pin"><span className="visual-pin-icon"><MapPin size={19} fill="currentColor" /></span><span><b>Riverside Colony</b><small>Signal needs attention</small></span><span className="visual-pin-dot" /></div>

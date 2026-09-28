@@ -475,100 +475,14 @@ button:focus-visible, select:focus-visible { outline: 3px solid #88c9bb; outline
 }
 
 
-/* Dark page surfaces requested for AquaWatch. */
-:root {
-  --background: #000000;
-  --foreground: #f1f5f2;
-  --card: #0b0d0c;
-  --card-foreground: #f1f5f2;
-  --popover: #0b0d0c;
-  --popover-foreground: #f1f5f2;
-  --secondary: #151a18;
-  --secondary-foreground: #d4dfd9;
-  --muted: #151a18;
-  --muted-foreground: #a5b2ac;
-  --accent: #14231f;
-  --accent-foreground: #b7eee0;
-  --border: #252d29;
-  --input: #303a35;
-  color-scheme: dark;
-}
-
-body, .app-shell { background: #000; color: #f1f5f2; }
-.site-header { border-bottom-color: rgba(225, 242, 233, .13); }
-.brand, .hero-copy h1, .dashboard-heading h1, .steps-intro h2,
-.section-heading h2, .zone-name-row h3, .zone-count b, .overview-item b,
-.card-heading h3, .report-modal h2, .report-symptom b, .checklist-copy b {
-  color: #f1f5f2;
-}
-.nav-link:hover, .nav-link.is-active { color: #e7f3ed; }
-.header-status, .step-icon, .overview-strip, .count-pill, .zone-card,
-.chart-card, .report-list-card, .actions-card, .source-card,
-.report-modal, .modal-close {
-  background: #0b0d0c;
-  color: #e7efea;
-  border-color: #252d29;
-}
-.header-status { color: #bac9c2; }
-.hero-subtitle, .step-text p, .dashboard-heading p, .section-heading .eyebrow,
-.overview-aside, .zone-count span, .zone-count small, .zone-card-bottom,
-.risk-legend, .dashboard-footer, .chart-window, .chart-y-labels,
-.chart-labels b, .chart-footnote, .report-symptom small, .report-time,
-.empty-reports, .actions-intro, .checklist-copy small, .results-disclaimer,
-.modal-intro, .field-label, .privacy-note {
-  color: #a5b2ac;
-}
-.hero-note, .hero-byline, .landing-footer > span { color: #aab8b2; }
-.steps-section, .dashboard-footer, .overview-divider,
-.zone-card-bottom, .report-list, .report-row, .chart-footnote,
-.checklist, .checklist-row { border-color: #252d29; }
-.step-number { background: #000; color: #a5b2ac; }
-.overview-item small, .updated-label small { color: #a5b2ac; }
-.overview-aside b { color: #d5e4dd; }
-.attention-banner { background: #21190f; border-color: #594329; color: #e8d9c6; }
-.attention-banner:hover { background: #2a2014; border-color: #775b35; }
-.attention-banner b { color: #f2dfc7; }
-.attention-banner small { color: #c5b49c; }
-.zone-card:hover { border-color: #48574f; box-shadow: 0 12px 25px rgba(0, 0, 0, .45); }
-.zone-card-bottom { border-top-color: #252d29; }
-.risk-banner.risk-coral { background: linear-gradient(108deg, #211713 0%, #1c1511 58%, #21190f 100%); border-color: #594035; }
-.risk-banner.risk-gold { background: linear-gradient(108deg, #211c11 0%, #1b180f 100%); border-color: #58482a; }
-.risk-banner.risk-green { background: linear-gradient(108deg, #111e18 0%, #131b16 100%); border-color: #304c3d; }
-.banner-eyebrow, .risk-banner p { color: #c4b9a9; }
-.banner-count { color: #d0bba7; }
-.chart-grid-line { stroke: #29332e; }
-.chart-dot { stroke: #0b0d0c; }
-.source-card { background: linear-gradient(137deg, #111d17 0%, #0b0d0c 73%); }
-.source-card.source-alert { background: linear-gradient(139deg, #21190f 0%, #0b0d0c 73%); border-color: #594329; }
-.source-card h3, .source-empty h3 { color: #f1e8dd; }
-.source-card > p, .source-card > p strong, .source-caution { color: #c1b5a6; }
-.source-caution { border-top-color: rgba(200, 180, 148, .2); }
-.actions-progress { background: #14231f; color: #b7eee0; }
-.custom-checkbox { background: #101412; border-color: #53635a; }
-.checklist-row:hover .custom-checkbox { border-color: #71b6a3; }
-.share-button { color: #aee3d3; background: #10211b; border-color: #31594a; }
-.share-button:hover { background: #173027; }
-.report-modal { border-color: #303a35; }
-.modal-close:hover { background: #18201c; }
-.report-modal select { color: #e7efea; background-color: #111613; border-color: #3a4740; color-scheme: dark; }
-
-.visual-topline { color: #e4eee8; background: rgba(8, 13, 12, .88); border-color: rgba(220, 242, 230, .2); }
-.visual-spark { background: rgba(8, 123, 121, .22); }
-.visual-pin { background: rgba(9, 15, 13, .94); border-color: rgba(220, 242, 230, .2); }
-.visual-pin b { color: #eff6f2; }
-.visual-pin small { color: #aab8b2; }
-.risk-coral .risk-banner h1 { color: #ef9a83; }
-.risk-gold .risk-banner h1 { color: #e7c978; }
-.risk-green .risk-banner h1 { color: #8bd2ae; }
-
-
 .neighborhood-map-section {
   margin-top: 22px;
   padding: 19px;
   border: 1px solid #252d29;
   border-radius: 14px;
-  background: linear-gradient(145deg, #0b100e 0%, #070908 100%);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+  background: rgba(248, 255, 251, .86);
+  border-color: rgba(182, 216, 206, .85);
+  box-shadow: 0 12px 32px rgba(31, 96, 83, .1);
 }
 .map-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 15px; }
 .map-panel-heading .eyebrow { color: #75b5a1; }
@@ -627,4 +541,149 @@ body, .app-shell { background: #000; color: #f1f5f2; }
   .map-sample-label { max-width: 118px; padding: 6px 7px; font-size: 6px; white-space: normal; }
   .neighborhood-map-canvas, .neighborhood-openstreetmap, .map-fallback { min-height: 295px; height: 295px; }
   .map-zone-items { grid-template-columns: 1fr; }
+}
+
+
+/* Coastal redesign: clear sea-glass surfaces over a quiet, moving shoreline. */
+:root {
+  --background: #edf8f6;
+  --foreground: #173842;
+  --card: rgba(255, 255, 255, .91);
+  --card-foreground: #173842;
+  --popover: #ffffff;
+  --popover-foreground: #173842;
+  --secondary: #e6f3ef;
+  --secondary-foreground: #24535a;
+  --muted: #edf5f2;
+  --muted-foreground: #637d80;
+  --accent: #dff2ed;
+  --accent-foreground: #0c6467;
+  --border: #d4e8e2;
+  --input: #cfe3dc;
+  color-scheme: light;
+}
+body { background: #d9eeea; color: #173842; }
+.app-shell { position: relative; isolation: isolate; min-height: 100vh; overflow: hidden; background: transparent; color: #173842; }
+.app-shell::before, .app-shell::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.app-shell::before {
+  background-image: linear-gradient(135deg, rgba(243, 251, 248, .78), rgba(231, 249, 246, .61) 42%, rgba(249, 245, 227, .57)), url("/manus-storage/aquawatch-beach-bg-optimized_d65d7c59.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.app-shell::after {
+  z-index: -1;
+  opacity: .45;
+  background-image: radial-gradient(ellipse 42% 62% at 72% 48%, rgba(26, 183, 180, .24), transparent 75%), radial-gradient(ellipse 34% 45% at 22% 62%, rgba(255, 255, 255, .42), transparent 76%);
+  background-size: 150% 140%, 160% 155%;
+  animation: water-current 24s ease-in-out infinite alternate;
+}
+@keyframes water-current {
+  0% { background-position: 0% 35%, 100% 50%; transform: translate3d(-.4%, 0, 0); }
+  100% { background-position: 100% 70%, 0% 40%; transform: translate3d(.4%, 0, 0); }
+}
+.site-header { border-bottom-color: rgba(17, 81, 83, .15); }
+.brand, .hero-copy h1, .dashboard-heading h1, .steps-intro h2, .section-heading h2, .zone-name-row h3, .zone-count b, .overview-item b, .card-heading h3, .report-modal h2, .report-symptom b, .checklist-copy b { color: #153c47; }
+.brand-accent, .hero-copy h1 em, .dashboard-heading h1 em, .steps-intro h2 em { color: #0c807c; }
+.nav-link:hover, .nav-link.is-active { color: #105b61; }
+.header-status, .step-icon, .overview-strip, .count-pill, .zone-card, .chart-card, .report-list-card, .actions-card, .source-card, .report-modal, .modal-close { background: rgba(255, 255, 255, .88); color: #25464f; border-color: rgba(186, 217, 207, .8); backdrop-filter: blur(10px); }
+.header-status { color: #486b6b; }
+.hero-copy .eyebrow, .dashboard-heading .eyebrow { color: #257871; }
+.hero-copy h1, .dashboard-heading h1 { text-shadow: 0 1px 14px rgba(255,255,255,.44); }
+.hero-subtitle, .step-text p, .dashboard-heading p, .section-heading .eyebrow, .overview-aside, .zone-count span, .zone-count small, .zone-card-bottom, .risk-legend, .dashboard-footer, .chart-window, .chart-y-labels, .chart-labels b, .chart-footnote, .report-symptom small, .report-time, .empty-reports, .actions-intro, .checklist-copy small, .results-disclaimer, .modal-intro, .field-label, .privacy-note { color: #607a7d; }
+.hero-note, .hero-byline, .landing-footer > span { color: #526f71; }
+.avatar-stack i { border-color: rgba(242, 249, 246, .98); }
+.hero-visual { background-color: #79d1cd; background-image: url("/manus-storage/aquawatch-beach-bg-optimized_d65d7c59.jpg"); background-size: cover; background-position: 58% 52%; box-shadow: 0 24px 54px rgba(22, 100, 98, .16); }
+.hero-visual::after { background: linear-gradient(180deg, rgba(234, 250, 245, .02), rgba(13, 96, 100, .02) 50%, rgba(7, 88, 93, .26)); }
+.visual-topline { color: #1b4c53; background: rgba(250, 255, 253, .9); border-color: rgba(255,255,255,.78); }
+.visual-spark { background: #e1f6ee; color: #148a7e; }
+.visual-pin { background: rgba(250,255,253,.94); border-color: rgba(255,255,255,.82); }
+.visual-pin b { color: #193f49; }
+.visual-pin small { color: #6d8584; }
+.visual-caption { color: #183f47; background: rgba(248, 255, 251, .89); border-color: rgba(255, 255, 255, .7); }
+.visual-caption-icon { background: rgba(19, 133, 125, .12); color: #17847b; }
+.visual-caption small { color: #547d79; }
+.visual-caption b { color: #1a4850; }
+.caption-arrow { color: #22887b; }
+.visual-coordinates { color: #255d61; background: rgba(246, 254, 250, .75); border-color: rgba(255,255,255,.8); }
+.steps-section { border-top-color: rgba(17, 81, 83, .16); }
+.steps-intro h2 { color: #153d47; }
+.step-icon { color: #17877c; background: rgba(255, 255, 255, .88); border-color: rgba(186, 217, 207, .86); }
+.step-number { color: #607d7a; background: rgba(240, 249, 246, .82); }
+.step-text h3 { color: #27525a; }
+.step-text p { color: #607a7d; }
+.step-arrow { color: #608b84; }
+.landing-footer > button { color: #176f6b; }
+.overview-strip { box-shadow: 0 7px 24px rgba(31, 96, 83, .08); }
+.overview-item b { color: #173d47; }
+.overview-item small { color: #627b7c; }
+.overview-aside b { color: #28585c; }
+.attention-banner { background: rgba(255, 249, 235, .91); border-color: #eed6ab; color: #66533c; }
+.attention-banner:hover { background: rgba(255, 245, 221, .96); border-color: #e2c18a; }
+.attention-banner b { color: #6d4e2f; }
+.attention-banner small { color: #87755c; }
+.section-heading h2 { color: #193f49; }
+.zone-card { background: rgba(255,255,255,.88); box-shadow: 0 9px 24px rgba(39, 99, 86, .08); }
+.zone-card:hover { box-shadow: 0 15px 29px rgba(39, 99, 86, .14); border-color: #b9d9cf; }
+.zone-name-row h3 { color: #1e4650; }
+.zone-count b { color: #214752; }
+.zone-card-bottom { border-top-color: rgba(195, 219, 209, .8); color: #557676; }
+.open-label { color: #177b72; }
+.dashboard-footer { border-top-color: rgba(170, 205, 194, .82); color: #5e7978; }
+.floating-report { color: #fff; background: #087d79; border-color: rgba(255,255,255,.8); box-shadow: 0 9px 26px rgba(10, 96, 92, .27); }
+.floating-report:hover { background: #096c6c; }
+.risk-banner.risk-coral { background: linear-gradient(108deg, rgba(255,244,237,.96), rgba(255,250,245,.94)); border-color: #f0d7c5; }
+.risk-banner.risk-gold { background: linear-gradient(108deg, rgba(255,248,228,.97), rgba(255,252,240,.95)); border-color: #ecdfb2; }
+.risk-banner.risk-green { background: linear-gradient(108deg, rgba(235,248,240,.97), rgba(248,253,247,.94)); border-color: #cfe8d8; }
+.banner-eyebrow, .risk-banner p { color: #746e61; }
+.banner-count { color: #805f4c; }
+.card-heading h3 { color: #24484e; }
+.chart-grid-line { stroke: #dce9e3; }
+.chart-dot { stroke: #fff; }
+.report-symptom b { color: #435d5d; }
+.source-card { background: linear-gradient(137deg, rgba(232,247,239,.96), rgba(255,255,255,.95)); }
+.source-card.source-alert { background: linear-gradient(139deg, rgba(255,246,230,.97), rgba(255,255,255,.95)); border-color: #eddfcb; }
+.source-card h3 { color: #634833; }
+.source-empty h3 { color: #305c50; }
+.source-card > p { color: #756e62; }
+.source-card > p strong { color: #765237; }
+.source-caution { color: #7c786e; border-top-color: rgba(139,121,95,.18); }
+.actions-progress { background: #e4f3ed; color: #327765; }
+.custom-checkbox { background: rgba(255,255,255,.92); border-color: #b9d1c7; }
+.checklist-row:hover .custom-checkbox { border-color: #459987; }
+.checklist-row.checked .custom-checkbox { border-color: #358978; background: #358978; }
+.checklist-copy b { color: #3e5f60; }
+.share-button { color: #276c62; background: rgba(236,249,242,.92); border-color: #c5dfd2; }
+.share-button:hover { background: #e4f5eb; }
+.results-disclaimer { color: #5e7978; }
+.back-button { color: #3b7771; }
+.back-button:hover { color: #086e6c; }
+.report-modal { background: rgba(255,255,255,.97); }
+.modal-close { color: #71847e; background: rgba(255,255,255,.96); }
+.report-modal select { color: #314b4e; background-color: #fbfdfb; border-color: #d8e7df; color-scheme: light; }
+.toast-message { color: #eff8f3; background: #145a5e; border-color: rgba(255,255,255,.5); box-shadow: 0 10px 28px rgba(8, 70, 71, .2); }
+.map-panel-heading h3 { color: #173f49; }
+.map-panel-heading p, .map-zone-copy small, .map-disclaimer { color: #607a7a; }
+.map-sample-label, .map-zone-list { color: #446667; background: rgba(250,255,252,.91); border-color: rgba(182,216,206,.88); backdrop-filter: blur(8px); }
+.map-zone-list-heading, .map-zone-copy b { color: #295158; }
+.map-zone-list-heading b { color: #2d6766; border-color: #c6e0d6; }
+.map-zone-item { color: #31575b; border-top-color: #e2eee8; }
+.map-zone-item:hover { background: rgba(222, 244, 235, .76); }
+.map-zone-copy b { color: #24474e; }
+.map-zone-copy small { color: #6d8584; }
+.map-zone-count { color: #315b5c; }
+.map-zone-count.risk-high { color: #b65b4d; }
+.map-zone-count.risk-moderate { color: #99741e; }
+.map-zone-count.risk-low { color: #32846a; }
+.map-zone-arrow { color: #789391; }
+.map-zone-pin.risk-high { background: rgba(237, 121, 107, .15); }
+.map-zone-pin.risk-moderate { background: rgba(227, 180, 79, .18); }
+.map-zone-pin.risk-low { background: rgba(70, 184, 135, .15); }
+.map-privacy-note { color: #527372; border-top-color: #dcebe5; }
+.map-privacy-note svg { color: #448d7a; }
+.map-overlay-label { color: #184f51; background: rgba(248,255,251,.88); border-color: rgba(255,255,255,.82); box-shadow: 0 5px 17px rgba(23,80,75,.1); }
+.map-fallback { color: #268778; background: radial-gradient(ellipse at center, #e5f5ee, #f7faf3 75%); }
+.map-fallback b { color: #24484f; }
+.map-fallback span { color: #617977; }
+@media (prefers-reduced-motion: reduce) {
+  .app-shell::after { animation: none; }
 }
