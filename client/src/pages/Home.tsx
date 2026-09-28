@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Link } from "wouter";
 import {
   Activity,
   AlertTriangle,
@@ -126,7 +125,6 @@ function Header({ screen, onHome, onDashboard }: { screen: Screen; onHome: () =>
       <nav className="header-nav" aria-label="Main navigation">
         <button className={`nav-link ${screen === "landing" ? "is-active" : ""}`} onClick={onHome}>Overview</button>
         <button className={`nav-link ${screen !== "landing" ? "is-active" : ""}`} onClick={onDashboard}>Live watch</button>
-        <Link href="/admin" className="nav-link admin-nav-link">Admin</Link>
       </nav>
       <button className="header-status" onClick={onDashboard}>
         <span className="live-dot" /> Live community signal <ChevronRight size={14} />
