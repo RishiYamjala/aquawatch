@@ -37,6 +37,7 @@ type Report = {
   reviewText?: string;
   analysis?: ReviewAnalysis;
   analysisStatus?: "pending" | "complete" | "failed";
+  analysisError?: string;
 };
 type Screen = "landing" | "dashboard" | "results";
 
@@ -314,7 +315,7 @@ function Results({ zone, summary, reports, onBack, onShare, sharedMessage }: { z
       <div className="results-grid">
         <section className="results-main"><VolumeChart reports={reports} zone={zone} />
           <div className="report-list-card"><div className="card-heading"><div><span className="eyebrow">COMMUNITY CHECK-INS</span><h3>Recent reports</h3></div><span className="count-pill">{recent.length} in 48h</span></div>
-            {recent.length ? <div className="report-list">{recent.slice().sort((a, b) => b.timestamp - a.timestamp).slice(0, 4).map((report) => <div className="report-row" key={report.id}><span className="report-symptom-icon"><HeartPulse size={16} /></span><span className="report-symptom"><b>{report.symptom}</b><small>{report.waterSource}</small>{report.reviewText && <small className="report-review-text">“{report.reviewText}”</small>}{report.analysisStatus === "pending" && <small className="review-analysis-status" role="status">Analyzing review…</small>}{report.analysisStatus === "failed" && <small className="review-analysis-status review-analysis-error" role="status">AI analysis unavailable; report saved.</small>}{report.analysis && <span className="review-analysis"><small><b>Gemini · {report.analysis.category.replaceAll("_", " ")}</b> · {report.analysis.severity} severity</small><span>{report.analysis.summary}</span><small><b>Suggested:</b> {report.analysis.recommended_action}</small></span>}</span><span className="report-time">{prettyAgo(report.timestamp)}</span></div>)}</div> : <div className="empty-reports"><Droplet size={18} /> No recent reports in this area.</div>}
+            {recent.length ? <div className="report-list">{recent.slice().sort((a, b) => b.timestamp - a.timestamp).slice(0, 4).map((report) => <div className="report-row" key={report.id}><span className="report-symptom-icon"><HeartPulse size={16} /></span><span className="report-symptom"><b>{report.symptom}</b><small>{report.waterSource}</small>{report.reviewText && <small className="report-review-text">“{report.reviewText}”</small>}{report.analysisStatus === "pending" && <small className="review-analysis-status" role="status">Analyzing review…</small>}{report.analysisStatus === "failed" && <small className="review-analysis-status review-analysis-error" role="status">{report.analysisError ?? "AI analysis failed; report saved."}</small>}{report.analysis && <span className="review-analysis"><small><b>Gemini · {report.analysis.category.replaceAll("_", " ")}</b> · {report.analysis.severity} severity</small><span>{report.analysis.summary}</span><small><b>Suggested:</b> {report.analysis.recommended_action}</small></span>}</span><span className="report-time">{prettyAgo(report.timestamp)}</span></div>)}</div> : <div className="empty-reports"><Droplet size={18} /> No recent reports in this area.</div>}
           </div>
         </section>
         <aside className="results-side"><SourceCard recent={recent} />
@@ -402,11 +403,14 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reviewText: reviewForAnalysis }),
     }).then(async (response) => {
-      const result = await response.json() as { ok?: boolean; analysis?: unknown };
-      if (!response.ok || result.ok !== true || !isReviewAnalysis(result.analysis)) throw new Error("Review analysis unavailable");
+      const result = await response.json().catch(() => null) as { ok?: boolean; analysis?: unknown; error?: string } | null;
+      if (!response.ok || result?.ok !== true || !isReviewAnalysis(result.analysis)) {
+        throw new Error(typeof result?.error === "string" ? result.error : `Gemini analysis failed (HTTP ${response.status}). Your report was still saved.`);
+      }
       setReports((current) => current.map((item) => item.id === id ? { ...item, analysis: result.analysis as ReviewAnalysis, analysisStatus: "complete" } : item));
-    }).catch(() => {
-      setReports((current) => current.map((item) => item.id === id ? { ...item, analysisStatus: "failed" } : item));
+    }).catch((error: unknown) => {
+      const analysisError = error instanceof Error ? error.message : "Gemini analysis failed. Your report was still saved.";
+      setReports((current) => current.map((item) => item.id === id ? { ...item, analysisStatus: "failed", analysisError } : item));
     });
   };
   const shareAlert = async () => {

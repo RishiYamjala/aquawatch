@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import express, { type Request, type Response } from "express";
 
-const GEMINI_MODEL = "gemini-3.8-flash";
+const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const REVIEW_MAX_LENGTH = 1200;
 const REVIEW_LIMIT = 8;
 const REVIEW_WINDOW_MS = 60_000;
@@ -55,15 +55,44 @@ function isReviewAnalysis(value: unknown): value is ReviewAnalysis {
     && candidate.recommended_action.length <= 300;
 }
 
-function respondWithGeminiError(error: unknown, res: Response, reportAlreadySaved = false) {
-  const upstreamStatus = error && typeof error === "object" && "status" in error
-    ? (error as { status?: unknown }).status
-    : undefined;
-  if (upstreamStatus === 429 || upstreamStatus === 503) {
-    res.setHeader("Retry-After", "30");
-    return res.status(503).json({ ok: false, error: reportAlreadySaved ? "Gemini is temporarily unavailable. Your report was still saved." : "Gemini is temporarily unavailable. Try again shortly." });
+function geminiErrorDetails(error: unknown) {
+  const candidate = error && typeof error === "object" ? error as Record<string, unknown> : {};
+  let status = Number(candidate.status ?? (candidate.response as Record<string, unknown> | undefined)?.status) || undefined;
+  let code = typeof candidate.code === "string" ? candidate.code : "";
+  let message = typeof candidate.message === "string" ? candidate.message : String(error ?? "Unknown Gemini error");
+  try {
+    const parsed = JSON.parse(message) as { error?: { message?: unknown; status?: unknown; code?: unknown } };
+    if (parsed.error && typeof parsed.error === "object") {
+      message = typeof parsed.error.message === "string" ? parsed.error.message : message;
+      code = typeof parsed.error.status === "string" ? parsed.error.status : typeof parsed.error.code === "string" ? parsed.error.code : code;
+      status = status ?? (typeof parsed.error.code === "number" ? parsed.error.code : undefined);
+    }
+  } catch {
+    // Most GoogleGenAI errors already expose a concise message rather than a JSON body.
   }
-  return res.status(502).json({ ok: false, error: reportAlreadySaved ? "Gemini review analysis is unavailable. Your report was still saved." : "Gemini request failed. Check server configuration and provider availability." });
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (apiKey) message = message.replaceAll(apiKey, "[REDACTED]");
+  message = message.replace(/AIza[0-9A-Za-z_-]{20,}/g, "[REDACTED]").replace(/(x-goog-api-key\s*[:=]\s*)[^\s,;]+/gi, "$1[REDACTED]");
+  return { status, code, message: message.slice(0, 700) };
+}
+
+function respondWithGeminiError(error: unknown, res: Response, reportAlreadySaved = false) {
+  const details = geminiErrorDetails(error);
+  const suffix = reportAlreadySaved ? " Your report was still saved." : "";
+  const label = details.status ? `HTTP ${details.status}${details.code ? ` (${details.code})` : ""}` : "request failed";
+  if (details.status === 429) {
+    const retrySeconds = Number(details.message.match(/retry\s+in\s+(\d+(?:\.\d+)?)\s*s/i)?.[1]);
+    if (Number.isFinite(retrySeconds) && retrySeconds > 0) res.setHeader("Retry-After", String(Math.min(3600, Math.ceil(retrySeconds))));
+    return res.status(429).json({ ok: false, code: "GEMINI_QUOTA_EXCEEDED", error: `Gemini API ${label}: ${details.message}${suffix}` });
+  }
+  if (details.status === 503) {
+    res.setHeader("Retry-After", "30");
+    return res.status(503).json({ ok: false, code: "GEMINI_UNAVAILABLE", error: `Gemini API ${label}: ${details.message}${suffix}` });
+  }
+  if ([400, 401, 403].includes(details.status ?? 0)) {
+    return res.status(502).json({ ok: false, code: "GEMINI_REQUEST_REJECTED", error: `Gemini API ${label}: ${details.message}${suffix}` });
+  }
+  return res.status(502).json({ ok: false, code: "GEMINI_UPSTREAM_ERROR", error: `Gemini API ${label}: ${details.message}${suffix}` });
 }
 
 export function createGeminiRouter() {
@@ -89,8 +118,8 @@ export function createGeminiRouter() {
         model: GEMINI_MODEL,
         input: "Return exactly this short sentence: Gemini is responding successfully for AquaWatch.",
         store: false,
-        generation_config: { max_output_tokens: 64, thinking_level: "low" },
-      }, { timeout_ms: 25_000, retries: { strategy: "none" } });
+        generation_config: { max_output_tokens: 64 },
+      }, { timeout_ms: 60_000, retries: { strategy: "none" } });
       const text = result.output_text?.trim();
       if (!text) {
         return res.status(502).json({ ok: false, error: "Gemini returned an empty response." });
@@ -146,8 +175,8 @@ export function createGeminiRouter() {
           mime_type: "application/json",
           schema: REVIEW_RESPONSE_SCHEMA,
         },
-        generation_config: { max_output_tokens: 256, thinking_level: "low" },
-      }, { timeout_ms: 25_000, retries: { strategy: "none" } });
+        generation_config: { max_output_tokens: 256 },
+      }, { timeout_ms: 60_000, retries: { strategy: "none" } });
 
       const output = result.output_text?.trim();
       if (!output) {

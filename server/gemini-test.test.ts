@@ -48,15 +48,15 @@ describe("POST /api/gemini/test", () => {
     const body = await response.json() as { ok?: boolean; model?: string; text?: string };
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ ok: true, model: "gemini-3.8-flash", text: "AquaWatch Gemini test is working." });
+    expect(body).toEqual({ ok: true, model: "gemini-3.5-flash-lite", text: "AquaWatch Gemini test is working." });
     expect(JSON.stringify(body)).not.toContain(process.env.GEMINI_API_KEY!);
     expect(GoogleGenAI).toHaveBeenCalledWith({ apiKey: "test-only-secret-not-a-real-key" });
     expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({
-      model: "gemini-3.8-flash",
+      model: "gemini-3.5-flash-lite",
       input: expect.stringContaining("Gemini is responding successfully for AquaWatch"),
       store: false,
-      generation_config: { max_output_tokens: 64, thinking_level: "low" },
-    }), { timeout_ms: 25_000, retries: { strategy: "none" } });
+      generation_config: { max_output_tokens: 64 },
+    }), { timeout_ms: 60_000, retries: { strategy: "none" } });
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
 
@@ -80,8 +80,9 @@ describe("POST /api/gemini/test", () => {
 
     expect(response.status).toBe(502);
     expect(body.ok).toBe(false);
-    expect(body.error).toContain("Gemini request failed");
-    expect(JSON.stringify(body)).not.toContain("credentials");
+    expect(body.error).toContain("Gemini API request failed");
+    expect(body.error).toContain("provider details");
+    expect(JSON.stringify(body)).not.toContain("test-only-secret-not-a-real-key");
   });
 
   it("returns a retryable JSON response for Gemini high-demand outages", async () => {
@@ -92,7 +93,9 @@ describe("POST /api/gemini/test", () => {
 
     expect(response.status).toBe(503);
     expect(response.headers.get("retry-after")).toBe("30");
-    expect(body).toEqual({ ok: false, error: "Gemini is temporarily unavailable. Try again shortly." });
-    expect(JSON.stringify(body)).not.toContain("temporary provider details");
+    expect(body.ok).toBe(false);
+    expect(body.code).toBe("GEMINI_UNAVAILABLE");
+    expect(body.error).toContain("Gemini API HTTP 503");
+    expect(body.error).toContain("temporary provider details");
   });
 });
