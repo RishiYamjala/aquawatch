@@ -1,14 +1,43 @@
-import { useState, type FormEvent } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import CustomersDashboard from "@/pages/CustomersDashboard";
+import { startLogin } from "@/const";
+import { ArrowLeft, ArrowRight, Droplet, LockKeyhole, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
-import { ArrowLeft, ArrowRight, Droplet, Eye, EyeOff, LockKeyhole, ShieldCheck } from "lucide-react";
 
 export default function AdminLogin() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [notice, setNotice] = useState("");
+  const { user, loading } = useAuth();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setNotice("Authentication is not connected yet. Your ID and password were not sent or saved.");
+  if (loading) {
+    return (
+      <div className="admin-auth-loading" role="status" aria-live="polite">
+        <span className="admin-card-icon"><LockKeyhole size={20} /></span>
+        <p>Checking administrator access…</p>
+      </div>
+    );
+  }
+
+  if (user?.role === "admin") return <CustomersDashboard />;
+
+  if (user) {
+    return (
+      <div className="app-shell admin-shell">
+        <header className="site-header admin-header">
+          <Link href="/" className="brand" aria-label="AquaWatch home">
+            <span className="brand-mark"><Droplet size={20} strokeWidth={2.5} /></span>
+            <span>Aqua<span className="brand-accent">Watch</span></span>
+          </Link>
+          <Link href="/" className="admin-back-link"><ArrowLeft size={15} /> Back to AquaWatch</Link>
+        </header>
+        <main className="admin-access-denied">
+          <div className="admin-card-icon"><ShieldCheck size={20} /></div>
+          <span className="admin-form-eyebrow">RESTRICTED AREA</span>
+          <h1>Administrator access required</h1>
+          <p>This signed-in account is not authorized to view customer records. If you need access, contact the AquaWatch site owner.</p>
+          <Link href="/" className="admin-home-link">Return to the public site</Link>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -25,8 +54,8 @@ export default function AdminLogin() {
         <section className="admin-intro" aria-labelledby="admin-title">
           <span className="admin-eyebrow"><span className="live-dot" /> AQUAWATCH · ADMINISTRATION</span>
           <h1 id="admin-title">A calmer view<br />for the people<br /><em>behind the signal.</em></h1>
-          <p>Sign in to the administration area to review community activity and keep local water updates clear and useful.</p>
-          <div className="admin-trust-note"><ShieldCheck size={17} /><span>Protected access for authorized administrators</span></div>
+          <p>Review customer contact details and account status in one private, role-protected workspace.</p>
+          <div className="admin-trust-note"><ShieldCheck size={17} /><span>Only authorized AquaWatch administrators can view this page</span></div>
           <div className="admin-watermark" aria-hidden="true"><Droplet size={178} strokeWidth={0.7} /></div>
         </section>
 
@@ -34,28 +63,14 @@ export default function AdminLogin() {
           <div className="admin-card-icon"><LockKeyhole size={20} /></div>
           <span className="admin-form-eyebrow">SECURE AREA</span>
           <h2 id="signin-title">Administrator sign in</h2>
-          <p className="admin-form-intro">Enter your administrator ID and password to continue.</p>
-
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <label htmlFor="admin-id">Administrator ID</label>
-            <input id="admin-id" name="adminId" type="text" autoComplete="username" placeholder="Enter your ID" required />
-
-            <label htmlFor="admin-password">Password</label>
-            <div className="admin-password-field">
-              <input id="admin-password" name="password" type={passwordVisible ? "text" : "password"} autoComplete="current-password" placeholder="Enter your password" required />
-              <button className="password-visibility" type="button" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? "Hide password" : "Show password"} aria-pressed={passwordVisible}>
-                {passwordVisible ? <EyeOff size={17} /> : <Eye size={17} />}
-              </button>
-            </div>
-
-            <button className="admin-submit" type="submit">Continue to admin <ArrowRight size={17} /></button>
-          </form>
-
+          <p className="admin-form-intro">Continue with your authorized AquaWatch account. Access is checked securely by the server.</p>
+          <Button className="admin-submit" onClick={() => startLogin("/admin")}>
+            Continue with secure sign-in <ArrowRight size={17} />
+          </Button>
           <div className="admin-setup-note" role="note">
             <LockKeyhole size={15} />
-            <p>This login page is a frontend preview. Authentication has not been configured; form values are not transmitted or stored.</p>
+            <p>This page does not accept or store a separate shared password. Only accounts with the administrator role can open the customer directory.</p>
           </div>
-          {notice && <p className="admin-notice" role="status">{notice}</p>}
           <Link href="/" className="admin-home-link">Return to the public site</Link>
         </section>
       </main>
